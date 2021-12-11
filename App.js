@@ -5,21 +5,29 @@ import { Text, View, FlatList, ActivityIndicator} from 'react-native';
 // https://randomuser.me/api/?page=3&results=10
 export default function App() {
   const [users, setUsers] = useState([])
-  const getPeople = () => {
-    axios.get('https://randomuser.me/api/?page=3&results=10')
+  const [page, setPage] = useState(1)
+  const [loading , setLoading] = useState(false)
+   const getPeople = () => {
+     setLoading(true)
+    axios.get(`https://randomuser.me/api/?page=${page}&results=10`)
     .then(response => {
-      setUsers(response.data.results)
-
+      // setUsers(response.data.results)
+      // now spread the new users and add to flatlist data
+      setUsers([...users, response.data.results])
+    setLoading(false)
     })
   }
   const loadMoreUsers = () => {
     console.log("more items loaded")
+    setPage(page+1)
+
   }
   renderLoader = () => {
     return ( 
+      loading ? 
       <View>
       <ActivityIndicator size ="large" color="green" />
-      </View>
+      </View> : null 
     )
 
   }
@@ -31,7 +39,7 @@ renderItem = ({item}) => {
 }
   useEffect(() => {
    getPeople()
-  }, [])
+  }, [page])
   return (
    <FlatList 
    data = {users}
