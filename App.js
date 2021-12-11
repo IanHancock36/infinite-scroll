@@ -1,21 +1,31 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-
+import axios from 'axios'
+import { Text, View } from 'react-native';
+// https://randomuser.me/api/?page=3&results=10
 export default function App() {
+  const [users, setUsers] = useState([])
+  const getPeople = () => {
+    axios.get('https://randomuser.me/api/?page=3&results=10')
+    .then(response => {
+      setUsers(response.data.results)
+
+    })
+  }
+renderItem = ({item}) => {
+<View>
+  <Image source ={{uri: item.picture.large}}/> 
+  <Text>{`${item.name.title} ${item.name.first} ${item.name.last}`}</Text>
+</View>
+}
+  useEffect(() => {
+   getUsers()
+  }, [])
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+   <Flatlist 
+   data = {users}
+   renderItem = {renderItem}
+   />
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
